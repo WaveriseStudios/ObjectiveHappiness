@@ -1,0 +1,118 @@
+// Fichier : Assets/Scripts/Units/States/WorkingState.cs
+using UnityEngine;
+
+public class WorkingState : IUnitState
+{
+    private float timeWorked = 0f;
+    private float fatigueThreshold = 50f;
+    private Vector3 targetLocation;
+    private ResourceNode targetNode;
+
+    public void OnEnter(Unit unit)
+    {
+        ResourceType requiredType = ResourceType.Food;
+
+        timeWorked = 0f;
+        unit.Movement.StopMoving();
+        if (unit.currentJob == Job.FoodGatherer) requiredType = ResourceType.Food;
+        else if (unit.currentJob == Job.Lumberjack) requiredType = ResourceType.Wood;
+        else if (unit.currentJob == Job.Miner) requiredType = ResourceType.Stone;
+        else
+        {
+            timeWorked = 0f;
+            unit.Movement.StopMoving();
+
+            if (unit.currentJob == Job.Mason)
+            {
+                // NOUVEAU : Cible un BuildingSite
+                BuildingSite site = GameObject.FindObjectOfType<BuildingSite>();
+
+                if (site != null)
+                {
+                    targetLocation = site.transform.position;
+                    unit.Movement.MoveTo(targetLocation);
+                    Debug.Log($"{unit.gameObject.name} (Maçon) se dirige vers le chantier.");
+                    targetNode = null; // Important pour éviter les conflits avec la récolte
+                    return;
+                }
+                else
+                {
+                    Debug.Log($"{unit.gameObject.name}: Pas de chantier actif. Errance.");
+                    unit.StateMachine.ChangeState(new ErranceState());
+                    return;
+                }
+            }
+        }
+
+        // 2. Trouver le ResourceNode le plus proche du type requis
+        ResourceNode[] allNodes = GameObject.FindObjectsOfType<ResourceNode>();
+        ResourceNode closestNode = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (ResourceNode node in allNodes)
+        {
+            // FILTRAGE CRUCIAL : Ne sélectionner que les nœuds du bon type
+            if (node.resourceType == requiredType)
+            {
+                float distance = Vector3.Distance(unit.transform.position, node.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestNode = node;
+                }
+            }
+        }
+
+        if (closestNode != null)
+        {
+            targetNode = closestNode;
+            targetLocation = targetNode.transform.position;
+            unit.Movement.MoveTo(targetLocation);
+            Debug.Log($"{unit.gameObject.name} (Job: {unit.currentJob}) se dirige vers {targetNode.name} pour {requiredType}.");
+        }
+        else
+        {
+            Debug.LogError($"Pas de ResourceNode de type {requiredType} trouvé pour {unit.gameObject.name}. Passage en errance.");
+            unit.StateMachine.ChangeState(new ErranceState());
+        }
+    }
+
+    public void OnExecute(Unit unit)
+    {
+        // 1. Gestion de la fatigue (inchangée)
+        timeWorked += Time.deltaTime;
+        if (timeWorked >= fatigueThreshold)
+        {
+            unit.isTired = true;
+            unit.StateMachine.ChangeState(new SeekingRestState());
+            return;
+        }
+
+        // 2. Travail réel
+        if (unit.Movement.IsArrived())
+        {
+            if (unit.currentJob == Job.Mason)
+            {
+                // Trouver le chantier à la destination
+                BuildingSite site = GameObject.FindObjectOfType<BuildingSite>(); // Simplifié : chercher le site unique
+
+                if (site != null)
+                {
+                    // Le maçon contribue à la construction
+                    site.Contribute(unit);
+                    // Note : Le site se détruit lui-même quand c'est fini.
+                }
+            }
+            else if (targetNode != null)
+            {
+                // Récolte (logique des autres métiers)
+                targetNode.TryGather(unit);
+            }
+        }
+    }
+
+    public void OnExit(Unit unit)
+    {
+        unit.Movement.StopMoving();
+    }
+}
