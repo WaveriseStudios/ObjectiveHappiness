@@ -9,10 +9,14 @@ public class UIController : MonoBehaviour
     private BuildingType selectedBuilding;
     private bool isPlacingMode = false;
     private LayerMask placementLayerMask;
+    public LayerMask playerLayerMask;
     public string ignoredLayerName = "Ignore Raycast"; // À configurer dans Unity
 
     public GameObject placementPreviewPrefab;
     private GameObject currentPreview;
+    private GameObject currentSelectedPlayer;
+
+    public Camera mainCamera;
 
     public float placementHeight = 0.5f;
     public float rotationSpeed = 90f;
@@ -39,6 +43,10 @@ public class UIController : MonoBehaviour
         if (isPlacingMode)
         {
             HandlePlacementInput();
+        }
+        else
+        {
+            HandleSelectionInput();
         }
     }
 
@@ -123,6 +131,31 @@ public class UIController : MonoBehaviour
         }
     }
 
+    private void HandleSelectionInput()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 1000f, playerLayerMask))
+            {
+
+                if(hit.collider.gameObject)
+                {
+                    currentSelectedPlayer = hit.collider.gameObject;
+                    mainCamera.GetComponent<CameraController>().Focus(currentSelectedPlayer);
+                }
+            }
+        }
+
+        // Annuler le placement avec la touche Échap
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ExitSelectionMode();
+        }
+    }
+
     private void ExitPlacementMode()
     {
         isPlacingMode = false;
@@ -132,6 +165,14 @@ public class UIController : MonoBehaviour
         {
             Destroy(currentPreview);
             currentPreview = null;
+        }
+    }
+
+    private void ExitSelectionMode()
+    {
+        if(mainCamera.GetComponent<CameraController>().isFocusing)
+        {
+            mainCamera.GetComponent<CameraController>().ExitFocus();
         }
     }
 

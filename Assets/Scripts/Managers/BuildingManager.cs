@@ -33,6 +33,7 @@ public class BuildingManager : MonoBehaviour
 
     private List<Building> activeHouses = new List<Building>();
     private List<BuildingSite> activeSites = new List<BuildingSite>();
+    private List<Building> activeSchool = new List<Building>();
     // ...
 
     void Start()
@@ -46,6 +47,12 @@ public class BuildingManager : MonoBehaviour
     }
 
     public bool IsSchoolBuilt() => buildingCounts[BuildingType.School] > 0;
+
+    public Building GetSchool()
+    {
+        System.Random rnd = new System.Random();
+        return activeSchool[0];
+    }
 
     public bool CanStartConstruction(BuildingType type)
     {
@@ -91,6 +98,7 @@ public class BuildingManager : MonoBehaviour
         {
             availableRestSlots += 2; // 2 places par Maison
             activeHouses.Add(site.GetComponent<Building>());
+            gameManager.ChangeProsperity(5f);
         }
         else if (type == BuildingType.Museum)
         {
@@ -99,6 +107,10 @@ public class BuildingManager : MonoBehaviour
         else if (type == BuildingType.Library)
         {
             gameManager.ChangeProsperity(2f);
+        }
+        else if(type == BuildingType.School)
+        {
+            activeSchool.Add(site.GetComponent<Building>());
         }
 
         Debug.Log($"{type} construit!");

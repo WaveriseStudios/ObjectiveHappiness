@@ -9,6 +9,8 @@ public class Unit : MonoBehaviour
     public UnitMovement Movement { get; private set; }
     private BuildingManager buildingManager;
     public GameObject currentHouse;
+    public GameObject focusPoint;
+    public bool isArrivedToDestination = false;
 
     // Données de l'individu
     public Job currentJob = Job.Vagabond;
@@ -98,7 +100,7 @@ public class Unit : MonoBehaviour
         if (currentJob == newJob) return;
 
         // Transition vers l'état d'apprentissage
-        StateMachine.ChangeState(new SchoolingState(newJob));
+        StateMachine.ChangeState(new SchoolingState(newJob, buildingManager.GetSchool().gameObject));
     }
 
     public void Rest()
@@ -118,6 +120,4 @@ public class Unit : MonoBehaviour
             StateMachine.ChangeState(new ErranceState());
         }
     }
-
-
 }

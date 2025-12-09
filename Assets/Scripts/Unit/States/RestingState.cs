@@ -4,7 +4,7 @@ using UnityEngine;
 public class RestingState : IUnitState
 {
     private float timeResting = 0f;
-    private float restDuration = 5f;
+    private float restDuration = 15f;
     private GameObject house;
 
     public RestingState(GameObject dest) { house = dest; }
@@ -17,11 +17,13 @@ public class RestingState : IUnitState
         unit.currentHouse = house;
         Vector3 targetLocation = house.transform.position;
         unit.Movement.MoveTo(targetLocation);
-        Debug.Log($"{unit.gameObject.name}va se reposé.");
+        Debug.Log($"{unit.gameObject.name} va se reposer.");
     }
 
     public void OnExecute(Unit unit)
     {
+        if (!unit.isArrivedToDestination) return;
+
         timeResting += Time.deltaTime;
 
         if (timeResting >= restDuration)

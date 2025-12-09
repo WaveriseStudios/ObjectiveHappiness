@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,11 +14,11 @@ public class GameManager : MonoBehaviour
     // Jauge de Prospérité
     private float prosperityGauge = 0f;
     public float ProsperityGaugePercentage => prosperityGauge / maxProsperity * 100f;
+    public Slider prosperitySlider;
 
     public float maxProsperity = 100f;
-    public int newUnitSpawnFrequency = 3;
 
-    private List<Unit> population = new List<Unit>();
+    [SerializeField] private List<Unit> population = new List<Unit>();
     public GameObject unitPrefab;
 
     void OnEnable()
@@ -35,6 +36,11 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         InitializeStartingPopulation();
+    }
+
+    private void Update()
+    {
+        UpdateProsperityGauge();
     }
 
     private void InitializeStartingPopulation()
@@ -61,7 +67,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDayStartHandler(int currentDay)
     {
-        if (currentDay > 1 && currentDay % newUnitSpawnFrequency == 0)
+        if (currentDay > 1)
         {
             SpawnNewUnit();
         }
@@ -115,6 +121,7 @@ public class GameManager : MonoBehaviour
     public void ChangeProsperity(float change)
     {
         prosperityGauge = Mathf.Clamp(prosperityGauge + change, 0f, maxProsperity);
+        prosperitySlider.value = ProsperityGaugePercentage;
         CheckWinCondition();
     }
 

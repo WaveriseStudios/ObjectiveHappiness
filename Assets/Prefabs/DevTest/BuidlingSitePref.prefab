@@ -117,6 +117,7 @@ GameObject:
   - component: {fileID: 1277432690921571562}
   - component: {fileID: 8295566353341117048}
   - component: {fileID: 8315312711068318158}
+  - component: {fileID: 94447110024032476}
   m_Layer: 0
   m_Name: BuidlingSitePref
   m_TagString: Untagged
@@ -185,3 +186,15 @@ MonoBehaviour:
   masonsNeeded: 0
   constructionTime: 10
   completedBuildingPrefab: {fileID: 0}
+--- !u!114 &94447110024032476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5615998903377408901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1edb04d1f05e52f4697df860a121e929, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

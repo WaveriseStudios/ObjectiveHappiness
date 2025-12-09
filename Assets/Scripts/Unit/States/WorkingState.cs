@@ -7,6 +7,7 @@ public class WorkingState : IUnitState
     private float fatigueThreshold = 50f;
     private Vector3 targetLocation;
     private ResourceNode targetNode;
+    private BuildingSite currentSite;
 
     public void OnEnter(Unit unit)
     {
@@ -25,11 +26,11 @@ public class WorkingState : IUnitState
             if (unit.currentJob == Job.Mason)
             {
                 // NOUVEAU : Cible un BuildingSite
-                BuildingSite site = GameObject.FindObjectOfType<BuildingSite>();
+                currentSite = GameObject.FindObjectOfType<BuildingSite>();
 
-                if (site != null)
+                if (currentSite != null)
                 {
-                    targetLocation = site.transform.position;
+                    targetLocation = currentSite.transform.position;
                     unit.Movement.MoveTo(targetLocation);
                     Debug.Log($"{unit.gameObject.name} (Maçon) se dirige vers le chantier.");
                     targetNode = null; // Important pour éviter les conflits avec la récolte
@@ -79,7 +80,8 @@ public class WorkingState : IUnitState
 
     public void OnExecute(Unit unit)
     {
-        // 1. Gestion de la fatigue (inchangée)
+        if (!unit.isArrivedToDestination) return;
+
         timeWorked += Time.deltaTime;
         if (timeWorked >= fatigueThreshold)
         {
@@ -88,26 +90,25 @@ public class WorkingState : IUnitState
             return;
         }
 
-        // 2. Travail réel
-        if (unit.Movement.IsArrived())
+        if (unit.currentJob == Job.Mason)
         {
-            if (unit.currentJob == Job.Mason)
-            {
-                // Trouver le chantier à la destination
-                BuildingSite site = GameObject.FindObjectOfType<BuildingSite>(); // Simplifié : chercher le site unique
 
-                if (site != null)
-                {
-                    // Le maçon contribue à la construction
-                    site.Contribute(unit);
-                    // Note : Le site se détruit lui-même quand c'est fini.
-                }
-            }
-            else if (targetNode != null)
+            if (currentSite != null)
             {
-                // Récolte (logique des autres métiers)
-                targetNode.TryGather(unit);
+                // Le maçon contribue à la construction
+                bool end = currentSite.Contribute(unit);
+                if(end) { currentSite = null; }
             }
+            else
+            {
+                unit.StateMachine.ChangeState(new WorkingState()); // Force le retour à OnEnter pour relancer la recherche
+                return;
+            }
+        }
+        else if (targetNode != null)
+        {
+            // Récolte (logique des autres métiers)
+            targetNode.TryGather(unit);
         }
     }
 
