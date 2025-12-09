@@ -3,13 +3,26 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+
+
+    [System.Serializable]
+    public struct SkinToJob
+    {
+        public Job job;
+        public GameObject associatedModel;
+    }
+
+
     // Propriétés pour l'accès public (utilisé par BuildingManager)
-    public int CurrentFood { get; private set; } = 50;
+    public int CurrentFood { get; private set; } = 5;
     public int CurrentWood { get; private set; } = 0;
     public int CurrentStone { get; private set; } = 0;
+
+    public List<SkinToJob> jobs;
 
     // Jauge de Prospérité
     private float prosperityGauge = 0f;
@@ -20,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private List<Unit> population = new List<Unit>();
     public GameObject unitPrefab;
+
+    public TextMeshProUGUI woodText, stoneText, foodText;
 
     void OnEnable()
     {
@@ -41,6 +56,9 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         UpdateProsperityGauge();
+        foodText.text = "Food : "+CurrentFood.ToString();
+        woodText.text = "Wood : " + CurrentWood.ToString();
+        stoneText.text = "Stone : " + CurrentStone.ToString();
     }
 
     private void InitializeStartingPopulation()
@@ -60,6 +78,7 @@ public class GameManager : MonoBehaviour
         if (newUnit != null)
         {
             newUnit.currentJob = initialJob;
+            newUnit.currentSkin = jobs.FirstOrDefault(i => i.job == initialJob).associatedModel;
             newUnit.gameObject.name = $"{initialJob} Unit_{population.Count + 1}";
             population.Add(newUnit);
         }

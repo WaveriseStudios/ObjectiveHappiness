@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 public class CameraController : MonoBehaviour
 {
     public Transform baseCameraPosition;
+    // NOUVEAU : La référence du Transform que nous devons suivre (le point de focus de l'unité)
+    private Transform focusPointTransform;
 
     public float transitionSmoothSpeed = 5f; // Vitesse de lissage (ajustez dans l'Inspecteur)
 
@@ -63,12 +65,6 @@ public class CameraController : MonoBehaviour
         {
             PerformTransition();
         }
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-        {
-            // Le mouvement est bloqué, mais le zoom reste actif pour une meilleure UX (cf. point 3)
-            HandleZoomAndPitch();
-            return;
-        }
         else
         {
             // Le mouvement par zones de l'écran ou le zoom ne s'activent que si la caméra n'est pas en transition
@@ -86,22 +82,30 @@ public class CameraController : MonoBehaviour
 
     private void PerformTransition()
     {
-        // 1. Interpolation de la Position (Lerp pour un mouvement linéaire)
+        // 1. Mettre à jour les cibles si un objet est en cours de suivi (mode Focus actif)
+        if (isFocusing && focusPointTransform != null)
+        {
+            // La cible de l'interpolation est mise à jour à la position actuelle de l'unité *cette frame*.
+            targetPosition = focusPointTransform.position;
+            targetRotation = focusPointTransform.rotation;
+        }
+        // Note : Si nous sommes en mode ExitFocus, targetPosition/Rotation restent fixés sur baseCameraPosition.
+
+        // 2. Interpolation de la Position
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * transitionSmoothSpeed);
 
-        // 2. Interpolation de la Rotation (Slerp pour une rotation sphérique douce)
+        // 3. Interpolation de la Rotation
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * transitionSmoothSpeed);
 
-        // 3. Vérification de la fin de la transition
-        // La transition est terminée si la position et la rotation sont très proches de la cible.
+        // 4. Vérification de la fin de la transition
         if (Vector3.Distance(transform.position, targetPosition) < 0.01f &&
             Quaternion.Angle(transform.rotation, targetRotation) < 0.1f)
         {
-            // Snap aux valeurs finales pour une précision parfaite
+            // Snap final
             transform.position = targetPosition;
             transform.rotation = targetRotation;
 
-            // Appliquer le parent final (Verrouillage ou retour à la position de base)
+            // Appliquer le parent (permet le suivi natif par le moteur)
             transform.SetParent(targetParent);
 
             // Arrêter la transition
@@ -184,34 +188,43 @@ public class CameraController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * smoothSpeed);
     }
 
+    // Fichier : CameraController.cs
+
     public void Focus(GameObject go)
     {
-        // 1. Définir les cibles finales
-        Transform focusPoint = go.GetComponent<Unit>().focusPoint.transform;
-        targetPosition = focusPoint.position;
-        targetRotation = focusPoint.rotation;
+        // 1. Définir le Transform que nous allons suivre
+        // On suppose que go.GetComponent<Unit>().focusPoint.transform existe toujours
+        focusPointTransform = go.GetComponent<Unit>().focusPoint.transform;
+
+        // 2. Initialiser les cibles avec la position actuelle du point de focus
+        targetPosition = focusPointTransform.position;
+        targetRotation = focusPointTransform.rotation;
         targetParent = go.transform; // Le parent final (l'unité)
 
-        // 2. Lancer la transition
+        GetComponent<Camera>().fieldOfView = 110;
+
+        // 3. Lancer la transition
         isTransitioning = true;
         isFocusing = true;
-
     }
 
     public void ExitFocus()
     {
-        // 1. Définir les cibles finales
+        // 1. Définir les cibles finales (la position de base)
         targetPosition = baseCameraPosition.position;
         targetRotation = baseCameraPosition.rotation;
-        targetParent = baseCameraPosition; // Le parent final (la position de base)
+        targetParent = baseCameraPosition;
 
-        // 2. Retirer le parent (si nécessaire) pour que l'interpolation se fasse correctement
+        // 2. IMPORTANT : Arrêter de suivre un objet mobile
+        focusPointTransform = null;
+
+        GetComponent<Camera>().fieldOfView = 60;
+
+        // 3. Lancer la transition
         if (transform.parent != null)
         {
             transform.SetParent(null);
         }
-
-        // 3. Lancer la transition
         isTransitioning = true;
         isFocusing = false;
     }

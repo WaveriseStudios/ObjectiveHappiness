@@ -176,6 +176,13 @@ public class UIController : MonoBehaviour
         }
     }
 
+
+    public void SendtoSchool(string job)
+    {
+        if (System.Enum.TryParse(job, out Job type))
+            currentSelectedPlayer.GetComponent<Unit>().SetJob(type);
+    }
+
     private bool IsPlacementValid(RaycastHit hit)
     {
         if (!hit.collider.gameObject.CompareTag("TerrainPlaine"))

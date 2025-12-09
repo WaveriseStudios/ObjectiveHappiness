@@ -10,6 +10,9 @@ public class Unit : MonoBehaviour
     private BuildingManager buildingManager;
     public GameObject currentHouse;
     public GameObject focusPoint;
+
+    public GameObject meshParent;
+    public GameObject currentSkin;
     public bool isArrivedToDestination = false;
 
     // Données de l'individu
@@ -18,6 +21,8 @@ public class Unit : MonoBehaviour
     public bool isTired = false;
     public bool isUnhappy = false;
 
+    public GameObject tiredIcon;
+
     public int maxAge = 80;
 
     void Awake()
@@ -25,6 +30,16 @@ public class Unit : MonoBehaviour
         StateMachine = GetComponent<UnitStateMachine>();
         Movement = GetComponent<UnitMovement>();
         buildingManager = FindObjectOfType<BuildingManager>();
+    }
+
+    private void Update()
+    {
+        tiredIcon.SetActive(isTired);
+    }
+
+    private void Start()
+    {
+        GameObject.Instantiate(currentSkin, meshParent.transform);
     }
 
     void OnEnable()
