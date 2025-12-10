@@ -106,15 +106,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.3
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.3
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.3
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalPosition.x
@@ -130,7 +130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalRotation.x
@@ -138,7 +138,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalRotation.z
@@ -150,16 +150,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -305091885687274788, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: b9cea5df2607445408781648fce4c262, type: 2}
     - target: {fileID: 919132149155446097, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
       propertyPath: m_Name
       value: Greenhouse
       objectReference: {fileID: 0}
+    - target: {fileID: 4370951913967234905, guid: bda927ffa42f69f429fbed425f59e0ed, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aa4912692d9bc0f47b0a6409e6081b79, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
