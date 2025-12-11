@@ -3,7 +3,7 @@ using UnityEngine;
 public class WorkingState : IUnitState
 {
     private float timeWorked = 0f;
-    private float fatigueThreshold = 60f;
+    private float fatigueThreshold = 500000f;
     private Vector3 targetLocation;
     private ResourceNode targetNode;
     private BuildingSite currentSite;
@@ -17,22 +17,16 @@ public class WorkingState : IUnitState
         if (unit.currentJob == Job.FoodGatherer) requiredType = ResourceType.Food;
         else if (unit.currentJob == Job.Lumberjack) requiredType = ResourceType.Wood;
         else if (unit.currentJob == Job.Miner) requiredType = ResourceType.Stone;
-
-        // Mason work
         else
         {
+            timeWorked = 0f;
             unit.Movement.StopMoving();
 
             if (unit.currentJob == Job.Mason)
             {
                 currentSite = GameObject.FindObjectOfType<BuildingSite>();
 
-                if(unit.isTired)
-                {
-                    unit.StateMachine.ChangeState(new SeekingRestState());
-                }
-
-                else if (currentSite != null)
+                if (currentSite != null)
                 {
                     targetLocation = currentSite.transform.position;
                     unit.Movement.MoveTo(targetLocation);
@@ -94,7 +88,7 @@ public class WorkingState : IUnitState
             if (currentSite != null)
             {
                 bool end = currentSite.Contribute(unit);
-                if(end) { currentSite = null;}
+                if(end) { currentSite = null; }
             }
             else
             {

@@ -140,7 +140,7 @@ public class GameManager : MonoBehaviour
     private void UpdateProsperityGauge()
     {
         int unhappyCount = population.Count(u => u.isUnhappy);
-        ChangeProsperity(-5);
+        ChangeProsperity(-unhappyCount);
     }
 
 

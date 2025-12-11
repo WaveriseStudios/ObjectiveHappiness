@@ -32,7 +32,7 @@ public class TimeManager : MonoBehaviour
 
     void Update()
     {
-        timeSinceLastTick += Time.deltaTime;
+        timeSinceLastTick += Time.unscaledDeltaTime;
 
         dayCounter.text = "Day : "+currentDay.ToString();
 

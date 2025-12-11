@@ -69,9 +69,13 @@ public class Unit : MonoBehaviour
     {
         if (currentJob == Job.Mason)
         {
-            if (StateMachine.currentState.GetType() != typeof(WorkingState))
+            if (StateMachine.currentState.GetType() != typeof(WorkingState) && !isTired)
             {
                 StateMachine.ChangeState(new WorkingState());
+            }
+            else
+            {
+                StateMachine.ChangeState(new SeekingRestState());
             }
         }
     }
