@@ -17,7 +17,7 @@ public class CameraController : MonoBehaviour
     // Cibles de l'interpolation
     private Vector3 targetPosition;
     private Quaternion targetRotation;
-    private Transform targetParent;
+    public Transform targetParent;
 
     [Header("Déplacement Horizontal")]
     [Tooltip("Vitesse de déplacement latéral de la caméra.")]
@@ -57,6 +57,8 @@ public class CameraController : MonoBehaviour
 
     public bool isFocusing = false;
 
+    public TimeManager tm;
+
 
     void Update()
     {
@@ -92,10 +94,10 @@ public class CameraController : MonoBehaviour
         // Note : Si nous sommes en mode ExitFocus, targetPosition/Rotation restent fixés sur baseCameraPosition.
 
         // 2. Interpolation de la Position
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * transitionSmoothSpeed);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.unscaledDeltaTime * transitionSmoothSpeed);
 
         // 3. Interpolation de la Rotation
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * transitionSmoothSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.unscaledDeltaTime * transitionSmoothSpeed);
 
         // 4. Vérification de la fin de la transition
         if (Vector3.Distance(transform.position, targetPosition) < 0.01f &&
@@ -152,7 +154,7 @@ public class CameraController : MonoBehaviour
         move.Normalize();
 
         // Applique le déplacement
-        transform.position += move * panSpeed * Time.deltaTime;
+        transform.position += move * panSpeed * Time.unscaledDeltaTime;
 
         // Optionnel : Clamper la position pour rester dans les limites de la carte
         Vector3 clampedPosition = transform.position;
@@ -185,7 +187,7 @@ public class CameraController : MonoBehaviour
 
         // Lissage de la rotation X (Pitch)
         Quaternion targetRotation = Quaternion.Euler(targetXAngle, transform.eulerAngles.y, transform.eulerAngles.z);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * smoothSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.unscaledDeltaTime * smoothSpeed);
     }
 
     // Fichier : CameraController.cs

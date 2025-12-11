@@ -1,4 +1,5 @@
 // Fichier : Assets/Scripts/Managers/TimeManager.cs
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -22,6 +23,9 @@ public class TimeManager : MonoBehaviour
     private int currentDay = 1;
     private float timeScaleFactor = 1f; // Multiplicateur (x1, x2, x3)
 
+    public TextMeshProUGUI dayCounter;
+
+
     void Start()
     {
         // Assurez-vous que Time.timeScale est à 1 au démarrage
@@ -34,9 +38,9 @@ public class TimeManager : MonoBehaviour
 
     void Update()
     {
-        // --- 1. Gestion du Tick Personnalisé (Utilise le temps non-scalé) ---
-        // Time.unscaledDeltaTime continue d'avancer même si Time.timeScale = 0
-        timeSinceLastTick += Time.unscaledDeltaTime;
+        timeSinceLastTick += Time.deltaTime;
+
+        dayCounter.text = "Day : "+currentDay.ToString();
 
         if (timeSinceLastTick >= tickFrequency)
         {
@@ -71,12 +75,12 @@ public class TimeManager : MonoBehaviour
         Debug.Log($"Jour {currentDay} commencé.");
     }
 
-    public void TogglePause()
+    public void TogglePause(bool value)
     {
         // La pause n'affecte pas l'avancement du temps de jeu ici (Update utilise Time.unscaledDeltaTime).
         // Elle sert uniquement à contrôler Time.timeScale (pour les animations, physics, etc.)
 
-        if (Time.timeScale > 0f) // Mettre en pause
+        if (value) // Mettre en pause
         {
             Time.timeScale = 0f;
             Debug.Log("Jeu en PAUSE (Time.timeScale = 0)");

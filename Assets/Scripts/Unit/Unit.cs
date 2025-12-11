@@ -100,6 +100,11 @@ public class Unit : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} est mort de {cause}.");
         // Le GameManager met à jour la population
+        CameraController cam = FindObjectOfType<Camera>().GetComponent<CameraController>();
+        if (cam.targetParent = this.transform)
+        {
+            cam.ExitFocus();
+        }
         Destroy(gameObject);
     }
 

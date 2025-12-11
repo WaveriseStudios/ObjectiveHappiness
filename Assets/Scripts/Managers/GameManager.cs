@@ -34,7 +34,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<Unit> population = new List<Unit>();
     public GameObject unitPrefab;
 
-    public TextMeshProUGUI woodText, stoneText, foodText;
+    public TextMeshProUGUI woodText, stoneText, foodText, popText;
+
+    #region UI
+
+    public void OpenPanel(GameObject go)
+    {
+        go.SetActive(true);
+    }
+
+    #endregion UI
 
     void OnEnable()
     {
@@ -56,9 +65,10 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         UpdateProsperityGauge();
-        foodText.text = "Food : "+CurrentFood.ToString();
-        woodText.text = "Wood : " + CurrentWood.ToString();
-        stoneText.text = "Stone : " + CurrentStone.ToString();
+        foodText.text = CurrentFood.ToString();
+        woodText.text = CurrentWood.ToString();
+        stoneText.text = CurrentStone.ToString();
+        popText.text = population.Count.ToString();
     }
 
     private void InitializeStartingPopulation()
