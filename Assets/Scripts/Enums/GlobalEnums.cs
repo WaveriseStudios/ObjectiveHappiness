@@ -1,13 +1,12 @@
-// Fichier : Assets/Scripts/GlobalEnums.cs
-// Contient les énumérations utilisées par tout le projet.
+using UnityEngine;
 
 public enum Job
 {
-    Vagabond,               // Ne se fatigue jamais
-    FoodGatherer,           // Récolteur de nourriture
-    Lumberjack,             // Bûcheron
-    Miner,                  // Mineur
-    Mason                   // Maçon (pour la construction)
+    Vagabond,
+    FoodGatherer,
+    Lumberjack,
+    Miner,
+    Mason
 }
 
 public enum ResourceType
@@ -19,9 +18,18 @@ public enum ResourceType
 
 public enum BuildingType
 {
-    House,      // Maison (Repos)
-    School,     // École (Apprentissage de métiers)
-    Farm,       // Ferme (Production de nourriture)
-    Library,    // Librairie (Prospérité)
-    Museum      // Musée (Prospérité)
+    House,
+    School,
+    Farm,
+    Library,
+    Museum
+}
+
+[System.Serializable]
+public struct SkinToJob
+{
+    public Job job;
+    public GameObject associatedModel;
+
+    // Skin associated to job
 }

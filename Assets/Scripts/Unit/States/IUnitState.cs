@@ -1,12 +1,11 @@
-// IUnitState.cs
 public interface IUnitState
 {
-    // Appelé une seule fois lors de l'entrée dans l'état
+    // Called on state enter
     void OnEnter(Unit unit);
 
-    // Appelé à chaque frame ou à intervalles réguliers (moins souvent que Update, de préférence)
+    // Called each tick
     void OnExecute(Unit unit);
 
-    // Appelé une seule fois lors de la sortie de l'état
+    // Called on state exit
     void OnExit(Unit unit);
 }

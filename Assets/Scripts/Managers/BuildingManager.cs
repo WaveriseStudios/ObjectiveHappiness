@@ -1,4 +1,3 @@
-// Fichier : Assets/Scripts/Managers/BuildingManager.cs
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,22 +18,15 @@ public class BuildingManager : MonoBehaviour
 
     private GameManager gameManager;
     private Dictionary<BuildingType, int> buildingCounts = new Dictionary<BuildingType, int>();
-    private int availableRestSlots = 0; // Capacité de repos totale
-
-    // Fichier : Assets/Scripts/Managers/BuildingManager.cs (Nouvelles variables)
-    // ...
-    // Référence au prefab du Chantier (à assigner dans l'Inspecteur)
+    private int availableRestSlots = 0;
     public GameObject buildingSitePrefab;
 
-    [Tooltip("Assignez ici les prefabs des bâtiments terminés.")]
     public List<GameObject> buildingPrefabs;
 
     public static event UnityAction<BuildingSite> OnNewBuildingSiteCreated;
 
     private List<Building> activeHouses = new List<Building>();
-    private List<BuildingSite> activeSites = new List<BuildingSite>();
     private List<Building> activeSchool = new List<Building>();
-    // ...
 
     void Start()
     {
@@ -67,53 +59,53 @@ public class BuildingManager : MonoBehaviour
 
         BuildingCost cost = GetCost(type);
 
-        // 1. Déduire les ressources
+
+        // Reduce resources by the amount needed for the building
         gameManager.AddResource(ResourceType.Wood, -cost.woodCost);
         gameManager.AddResource(ResourceType.Stone, -cost.stoneCost);
 
-        // 2. Créer le BuildingSite
         GameObject siteObject = Instantiate(buildingSitePrefab, placementPosition, rotation);
         BuildingSite site = siteObject.GetComponent<BuildingSite>();
 
+
+        // Check if valid
         if (site != null)
         {
-            // 3. Initialiser le chantier
             site.buildingType = type;
             site.masonsNeeded = cost.masonsRequired;
 
             GameObject completedPrefab = buildingPrefabs.Find(p => p.GetComponent<Building>()?.type == type);
             site.completedBuildingPrefab = completedPrefab;
 
-            OnNewBuildingSiteCreated?.Invoke(site); // Notifie les Maçons
+            OnNewBuildingSiteCreated?.Invoke(site);
         }
-
-        Debug.Log($"Construction de {type} démarrée. Les maçons vont s'activer.");
     }
 
     public void FinishConstruction(BuildingType type, GameObject site)
     {
         buildingCounts[type]++;
 
+        // Not optimal ; see later for a fix
+
+
         if (type == BuildingType.House)
         {
-            availableRestSlots += 2; // 2 places par Maison
+            availableRestSlots += 2;
             activeHouses.Add(site.GetComponent<Building>());
-            gameManager.ChangeProsperity(5f);
+            gameManager.ChangeProsperity(15f);
         }
         else if (type == BuildingType.Museum)
         {
-            gameManager.ChangeProsperity(5f);
+            gameManager.ChangeProsperity(25f);
         }
         else if (type == BuildingType.Library)
         {
-            gameManager.ChangeProsperity(2f);
+            gameManager.ChangeProsperity(20f);
         }
         else if(type == BuildingType.School)
         {
             activeSchool.Add(site.GetComponent<Building>());
         }
-
-        Debug.Log($"{type} construit!");
     }
 
     public BuildingCost GetCost(BuildingType type) => costs.First(c => c.type == type);
@@ -130,23 +122,22 @@ public class BuildingManager : MonoBehaviour
 
     public Building FindAvailableHouseAndAcquireSlot(Vector3 position)
     {
-        // 1. Filtrer toutes les maisons actives par celles qui ont de la place
+
+        // Filter to search for the closest and available house
         Building availableHouse = activeHouses
             .Where(h => h.currentRestOccupancy < h.maxRestOccupancy)
             .OrderBy(h => Vector3.Distance(position, h.transform.position))
-            .FirstOrDefault(); // Prend la plus proche disponible
+            .FirstOrDefault();
 
         if (availableHouse != null)
         {
-            // 2. Acquisition : La maison choisie prend maintenant la responsabilité du slot
             availableHouse.TryAcquireSlot();
             return availableHouse;
         }
 
-        return null; // Aucune maison disponible
+        return null;
     }
 
-    // NOUVELLE MÉTHODE : Libérer le slot sur la maison spécifique
     public void ReleaseRestSlot(Building house)
     {
         if (house != null)

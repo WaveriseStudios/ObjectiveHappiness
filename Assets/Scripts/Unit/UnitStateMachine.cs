@@ -1,4 +1,3 @@
-// Fichier : Assets/Scripts/Units/UnitStateMachine.cs
 using UnityEngine;
 
 public class UnitStateMachine : MonoBehaviour
@@ -6,19 +5,16 @@ public class UnitStateMachine : MonoBehaviour
     private Unit unit;
     public IUnitState currentState;
 
-    // Fichier : Assets/Scripts/Units/UnitStateMachine.cs
     void Start()
     {
         unit = GetComponent<Unit>();
 
-        // Ancien code (trop général, force l'Errance si ce n'est pas Vagabond)
         if (unit.currentJob == Job.Vagabond)
         {
-            ChangeState(new ErranceState());
+            ChangeState(new WanderState());
         }
         else
         {
-            // Les individus de départ commencent par travailler
             ChangeState(new WorkingState());
         }
     }
@@ -31,6 +27,8 @@ public class UnitStateMachine : MonoBehaviour
         }
     }
 
+
+    // Change state 
     public void ChangeState(IUnitState newState)
     {
         if (currentState != null)
@@ -44,7 +42,5 @@ public class UnitStateMachine : MonoBehaviour
         {
             currentState.OnEnter(unit);
         }
-
-        // Debug.Log($"{unit.gameObject.name} -> {newState.GetType().Name}");
     }
 }

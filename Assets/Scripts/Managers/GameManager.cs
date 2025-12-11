@@ -8,23 +8,10 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
 
+    public int CurrentFood = 15;
+    public int CurrentWood = 20;
+    public int CurrentStone= 20;
 
-    [System.Serializable]
-    public struct SkinToJob
-    {
-        public Job job;
-        public GameObject associatedModel;
-    }
-
-
-    // Propriétés pour l'accès public (utilisé par BuildingManager)
-    public int CurrentFood { get; private set; } = 5;
-    public int CurrentWood { get; private set; } = 0;
-    public int CurrentStone { get; private set; } = 0;
-
-    public List<SkinToJob> jobs;
-
-    // Jauge de Prospérité
     private float prosperityGauge = 0f;
     public float ProsperityGaugePercentage => prosperityGauge / maxProsperity * 100f;
     public Slider prosperitySlider;
@@ -34,16 +21,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<Unit> population = new List<Unit>();
     public GameObject unitPrefab;
 
+
+    // Lot of texts
     public TextMeshProUGUI woodText, stoneText, foodText, popText;
-
-    #region UI
-
-    public void OpenPanel(GameObject go)
-    {
-        go.SetActive(true);
-    }
-
-    #endregion UI
 
     void OnEnable()
     {
@@ -64,7 +44,6 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        UpdateProsperityGauge();
         foodText.text = CurrentFood.ToString();
         woodText.text = CurrentWood.ToString();
         stoneText.text = CurrentStone.ToString();
@@ -88,12 +67,14 @@ public class GameManager : MonoBehaviour
         if (newUnit != null)
         {
             newUnit.currentJob = initialJob;
-            newUnit.currentSkin = jobs.FirstOrDefault(i => i.job == initialJob).associatedModel;
             newUnit.gameObject.name = $"{initialJob} Unit_{population.Count + 1}";
             population.Add(newUnit);
+            ChangeProsperity(5f);
         }
     }
 
+
+    // Day end, spawn etc
     private void OnDayStartHandler(int currentDay)
     {
         if (currentDay > 1)
@@ -120,7 +101,7 @@ public class GameManager : MonoBehaviour
 
             foreach (Unit victim in victims)
             {
-                victim.Die("faim");
+                victim.Die("Hunger");
             }
 
             population.RemoveAll(u => victims.Contains(u));
@@ -131,6 +112,8 @@ public class GameManager : MonoBehaviour
         UpdateProsperityGauge();
     }
 
+
+    // Resources ++
     public void AddResource(ResourceType type, int amount)
     {
         switch (type)
@@ -149,22 +132,24 @@ public class GameManager : MonoBehaviour
 
     public void ChangeProsperity(float change)
     {
-        prosperityGauge = Mathf.Clamp(prosperityGauge + change, 0f, maxProsperity);
-        prosperitySlider.value = ProsperityGaugePercentage;
+        prosperityGauge = prosperityGauge + change;
+        prosperitySlider.value = prosperityGauge;
         CheckWinCondition();
     }
 
     private void UpdateProsperityGauge()
     {
         int unhappyCount = population.Count(u => u.isUnhappy);
-        ChangeProsperity(-unhappyCount * 0.1f);
+        ChangeProsperity(-5);
     }
 
+
+    // Win / lose
     private void CheckWinCondition()
     {
         if (prosperityGauge >= maxProsperity)
         {
-            Debug.Log("VICTOIRE!");
+            Debug.Log("Victory!");
             Time.timeScale = 0f;
         }
     }
@@ -173,7 +158,7 @@ public class GameManager : MonoBehaviour
     {
         if (population.Count == 0)
         {
-            Debug.Log("DÉFAITE!");
+            Debug.Log("Defeat!");
             Time.timeScale = 0f;
         }
     }

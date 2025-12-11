@@ -1,35 +1,28 @@
-// Fichier : Assets/Scripts/Buildings/BuildingSite.cs
 using UnityEngine;
 
 public class BuildingSite : MonoBehaviour
 {
     public BuildingType buildingType;
-    public int masonsNeeded; // Nombre de maçons requis (pour la complexité)
-    public float constructionTime = 10f; // Temps total requis (effort)
+    public int masonsNeeded;
+    public float constructionTime = 10f;
 
-    private float constructionProgress = 0f; // Progrès actuel (0 à 100)
+    private float constructionProgress = 0f;
     private BuildingManager buildingManager;
 
-    // Le prefab du bâtiment terminé à instancier
     public GameObject completedBuildingPrefab;
 
     void Start()
     {
         buildingManager = FindObjectOfType<BuildingManager>();
-
-        // Optionnel : L'effort total peut être calculé en fonction du nombre de maçons requis * le temps.
     }
 
-    // Fonction appelée par un Maçon (WorkingState)
+
+    // Function to make the mason work on the building site
     public bool Contribute(Unit mason)
     {
-        // 1. Ajouter le progrès
-        float effort = Time.deltaTime; // Chaque frame où le maçon est là, il travaille
+        float effort = Time.deltaTime;
         constructionProgress += effort;
 
-        Debug.Log($"Chantier {buildingType} : {Mathf.Round(constructionProgress / constructionTime * 100)}%");
-
-        // 2. Vérifier la fin de la construction
         if (constructionProgress >= constructionTime)
         {
             FinishBuilding();
@@ -38,21 +31,18 @@ public class BuildingSite : MonoBehaviour
         return false;
     }
 
+
+    // Instantiate the finished building prefab
     private void FinishBuilding()
     {
         GameObject go = null;
-        // 1. Instancier le bâtiment terminé
         if (completedBuildingPrefab != null)
         {
             go = Instantiate(completedBuildingPrefab, transform.position, transform.rotation);
         }
 
-        // 2. Informer le BuildingManager
         buildingManager.FinishConstruction(buildingType, go);
 
-        // 3. Détruire le chantier
         Destroy(gameObject);
-
-        Debug.Log($"{buildingType} est terminé !");
     }
 }

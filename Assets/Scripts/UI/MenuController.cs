@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
+
+
+    // Nothing interesting only basis thing
     public void Quit()
     {
         Application.Quit();

@@ -1,4 +1,3 @@
-// Fichier : Assets/Scripts/Units/UnitMovement.cs
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,6 +14,8 @@ public class UnitMovement : MonoBehaviour
         agent.stoppingDistance = stopDistance;
     }
 
+
+    // Go to location with navmesh
     public void MoveTo(Vector3 targetPosition)
     {
         if (agent.isActiveAndEnabled)
@@ -23,7 +24,8 @@ public class UnitMovement : MonoBehaviour
         }
     }
 
-    // Implémentation simplifiée pour l'errance
+
+    // random movement for wanderer
     public void MoveToRandomLocation(float maxRange)
     {
         Vector3 randomDirection = Random.insideUnitSphere * maxRange;

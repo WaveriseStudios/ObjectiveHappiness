@@ -10,7 +10,7 @@ public class UIController : MonoBehaviour
     private bool isPlacingMode = false;
     private LayerMask placementLayerMask;
     public LayerMask playerLayerMask;
-    public string ignoredLayerName = "Ignore Raycast"; // À configurer dans Unity
+    public string ignoredLayerName = "Ignore Raycast";
 
     public GameObject placementPreviewPrefab;
     private GameObject currentPreview;
@@ -27,7 +27,6 @@ public class UIController : MonoBehaviour
     {
         buildingManager = FindObjectOfType<BuildingManager>();
 
-        // Initialisation du masque de Layer pour ignorer le preview
         int ignoredLayer = LayerMask.NameToLayer(ignoredLayerName);
         if (ignoredLayer != -1)
         {
@@ -35,8 +34,7 @@ public class UIController : MonoBehaviour
         }
         else
         {
-            placementLayerMask = ~0; // Tout est inclus si le Layer n'existe pas
-            Debug.LogError($"Layer '{ignoredLayerName}' non trouvé.");
+            placementLayerMask = ~0;
         }
     }
 
@@ -52,7 +50,8 @@ public class UIController : MonoBehaviour
         }
     }
 
-    // Fonction appelée par les boutons de l'UI (avec le nom de l'Enum en string)
+
+    // Ui method to select building
     public void SelectBuildingToPlace(string buildingTypeName)
     {
         if (System.Enum.TryParse(buildingTypeName, out BuildingType type))
@@ -68,7 +67,6 @@ public class UIController : MonoBehaviour
 
                 isPlacingMode = true;
 
-                // CRÉATION DE LA PRÉVISUALISATION
                 if (placementPreviewPrefab != null)
                 {
                     currentPreview = Instantiate(placementPreviewPrefab);
@@ -77,6 +75,8 @@ public class UIController : MonoBehaviour
         }
     }
 
+
+    // Follow mouse input for the placement or selection
     private void HandlePlacementInput()
     {
         if (EventSystem.current.IsPointerOverGameObject())
@@ -181,12 +181,15 @@ public class UIController : MonoBehaviour
     }
 
 
+
+    // Send current unit to school with the new job specified
     public void SendtoSchool(string job)
     {
         if (System.Enum.TryParse(job, out Job type))
             currentSelectedPlayer.GetComponent<Unit>().SetJob(type);
     }
 
+    // Check site pos
     private bool IsPlacementValid(RaycastHit hit)
     {
         if (!hit.collider.gameObject.CompareTag("TerrainPlaine"))
@@ -194,7 +197,7 @@ public class UIController : MonoBehaviour
             return false;
         }
 
-        // Interdit sur les zones de récolte ou près d'un autre bâtiment
+        // No site on resources or on already extisting building
         Collider[] colliders = Physics.OverlapSphere(hit.point, 1.0f);
         foreach (Collider col in colliders)
         {

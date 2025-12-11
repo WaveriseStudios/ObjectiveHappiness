@@ -1,6 +1,5 @@
-// Fichier : Assets/Scripts/Units/States/SchoolingState.cs
 using UnityEngine;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
+using System.Linq;
 
 public class SchoolingState : IUnitState
 {
@@ -8,6 +7,7 @@ public class SchoolingState : IUnitState
 	private float schoolingDuration = 15f;
 	private Job nextJob;
 	private GameObject schoolObject;
+	private GameManager gm;
 
 	public SchoolingState(Job jobToLearn, GameObject dest)
 	{
@@ -20,8 +20,10 @@ public class SchoolingState : IUnitState
 		timeSchooling = 0f;
         Vector3 targetLocation = schoolObject.transform.position;
         unit.Movement.MoveTo(targetLocation);
+		gm = GameObject.FindObjectOfType<GameManager>();
     }
 
+	// Execute job switch in 15 sec
 	public void OnExecute(Unit unit)
 	{
 		if (!unit.isArrivedToDestination) return;
@@ -38,13 +40,14 @@ public class SchoolingState : IUnitState
 			}
 			else
 			{
-				unit.StateMachine.ChangeState(new ErranceState());
+				unit.StateMachine.ChangeState(new WanderState());
 			}
 		}
 	}
 
 	public void OnExit(Unit unit)
 	{
-		// L'individu quitte l'École
-	}
+		GameObject.Destroy(unit.currentSkin);
+		unit.SetNewSkin();
+    }
 }

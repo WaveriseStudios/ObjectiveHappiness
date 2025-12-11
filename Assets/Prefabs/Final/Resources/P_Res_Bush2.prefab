@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 0
-  baseGatherAmount: 1
+  baseGatherAmount: 5
   gatherInterval: 2
 --- !u!114 &5740412387668235337
 MonoBehaviour:
@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 0
-  baseGatherAmount: 1
+  baseGatherAmount: 5
   gatherInterval: 2
 --- !u!114 &2607659851092055438
 MonoBehaviour:
@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 0
-  baseGatherAmount: 1
+  baseGatherAmount: 5
   gatherInterval: 2
 --- !u!114 &2109314164436757432
 MonoBehaviour:
@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 0
-  baseGatherAmount: 1
+  baseGatherAmount: 5
   gatherInterval: 2
 --- !u!114 &8630202712116486555
 MonoBehaviour:

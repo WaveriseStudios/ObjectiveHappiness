@@ -5,34 +5,28 @@ using UnityEngine.Events;
 
 public class TimeManager : MonoBehaviour
 {
-    // Paramètres
-    public float dayDurationInSeconds = 60f; // Durée d'une journée (Y unités de temps)
+    public float dayDurationInSeconds = 60f;
 
-    // NOUVEAU : Fréquence de tick
-    [Tooltip("Fréquence à laquelle le temps de jeu avance (une fois toutes les X secondes non-scalées).")]
-    public float tickFrequency = 0.1f; // 10 ticks par seconde (1 / 0.1f)
+    public float tickFrequency = 0.1f;
 
-    // Événements
     public static event UnityAction OnDayEnd;
     public static event UnityAction<int> OnDayStart;
-    public static event UnityAction OnGameTick; // NOUVEAU : Événement pour les actions qui doivent se produire à chaque tick
+    public static event UnityAction OnGameTick;
 
-    // Variables de contrôle
-    private float timeSinceLastTick = 0f; // Temps non-scalé écoulé depuis le dernier tick
+    private float timeSinceLastTick = 0f;
     private float timeSinceDayStart = 0f;
     private int currentDay = 1;
-    private float timeScaleFactor = 1f; // Multiplicateur (x1, x2, x3)
+    private float timeScaleFactor = 1f;
 
     public TextMeshProUGUI dayCounter;
 
 
     void Start()
     {
-        // Assurez-vous que Time.timeScale est à 1 au démarrage
+        
         Time.timeScale = 1f;
-        SetTimeScale(1f); // Initialise timeScaleFactor
+        SetTimeScale(1f);
 
-        // Démarre le jour 1
         OnDayStart?.Invoke(currentDay);
     }
 
@@ -44,18 +38,14 @@ public class TimeManager : MonoBehaviour
 
         if (timeSinceLastTick >= tickFrequency)
         {
-            // Calcule le nombre de ticks qui devraient avoir eu lieu
             int ticksToProcess = Mathf.FloorToInt(timeSinceLastTick / tickFrequency);
-            timeSinceLastTick -= ticksToProcess * tickFrequency; // Remettre à jour le temps restant
+            timeSinceLastTick -= ticksToProcess * tickFrequency;
 
-            // Avance le temps de jeu
             float gameTimeAdvanced = (ticksToProcess * tickFrequency) * timeScaleFactor;
             timeSinceDayStart += gameTimeAdvanced;
 
-            // Déclenche l'événement de tick pour toutes les unités/logiques qui en ont besoin
             OnGameTick?.Invoke();
 
-            // --- 2. Vérification de fin de journée ---
             if (timeSinceDayStart >= dayDurationInSeconds)
             {
                 EndDay();
@@ -63,7 +53,7 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    // ... (Reste du code pour EndDay, TogglePause et SetTimeScale) ...
+    // End day time, pause , x3 x2 etc
 
     private void EndDay()
     {
@@ -71,24 +61,17 @@ public class TimeManager : MonoBehaviour
         timeSinceDayStart = 0f;
         currentDay++;
         OnDayStart?.Invoke(currentDay);
-
-        Debug.Log($"Jour {currentDay} commencé.");
     }
 
     public void TogglePause(bool value)
     {
-        // La pause n'affecte pas l'avancement du temps de jeu ici (Update utilise Time.unscaledDeltaTime).
-        // Elle sert uniquement à contrôler Time.timeScale (pour les animations, physics, etc.)
-
-        if (value) // Mettre en pause
+        if (value)
         {
             Time.timeScale = 0f;
-            Debug.Log("Jeu en PAUSE (Time.timeScale = 0)");
         }
-        else // Reprendre
+        else
         {
             Time.timeScale = timeScaleFactor;
-            Debug.Log($"Jeu repris (Time.timeScale = {timeScaleFactor})");
         }
     }
 
@@ -97,11 +80,10 @@ public class TimeManager : MonoBehaviour
         if (scale == 1f || scale == 2f || scale == 3f)
         {
             timeScaleFactor = scale;
-            if (Time.timeScale > 0f) // Applique uniquement si le jeu n'est pas en pause réelle
+            if (Time.timeScale > 0f)
             {
                 Time.timeScale = scale;
             }
-            Debug.Log($"Vitesse de jeu définie sur x{scale}");
         }
     }
 }

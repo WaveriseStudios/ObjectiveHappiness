@@ -249,6 +249,17 @@ MonoBehaviour:
   currentSkin: {fileID: 0}
   isArrivedToDestination: 0
   currentJob: 0
+  jobs:
+  - job: 1
+    associatedModel: {fileID: 919132149155446097, guid: b2e8b605038141c438a1922580453c32, type: 3}
+  - job: 2
+    associatedModel: {fileID: 919132149155446097, guid: d67201cc5fca5554db23fc3fa0e31286, type: 3}
+  - job: 4
+    associatedModel: {fileID: 919132149155446097, guid: e596fe0c200fa6643848ee9fba3620f9, type: 3}
+  - job: 3
+    associatedModel: {fileID: 919132149155446097, guid: de9b4ededadd80f47acc8053422814d9, type: 3}
+  - job: 0
+    associatedModel: {fileID: 919132149155446097, guid: c9e061fa186118d469512336d977e023, type: 3}
   age: 0
   isTired: 0
   isUnhappy: 0

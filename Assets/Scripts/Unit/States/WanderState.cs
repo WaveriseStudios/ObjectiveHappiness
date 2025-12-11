@@ -1,7 +1,6 @@
-// Fichier : Assets/Scripts/Units/States/ErranceState.cs
 using UnityEngine;
 
-public class ErranceState : IUnitState
+public class WanderState : IUnitState
 {
     private float wanderTimer = 0f;
     private float wanderInterval = 5f;
@@ -10,19 +9,19 @@ public class ErranceState : IUnitState
     {
         unit.Movement.StopMoving();
         wanderTimer = 0f;
-        unit.Movement.MoveToRandomLocation(10f); // Se déplacer aléatoirement
+        unit.Movement.MoveToRandomLocation(10f);
     }
 
+
+    // Random movement in the map
     public void OnExecute(Unit unit)
     {
-        // 1. Vérifier si une maison est disponible (si l'unité est fatiguée)
         if (unit.isTired)
         {
             unit.StateMachine.ChangeState(new SeekingRestState());
             return;
         }
 
-        // 2. Errance aléatoire
         if (unit.Movement.IsArrived())
         {
             wanderTimer += Time.deltaTime;

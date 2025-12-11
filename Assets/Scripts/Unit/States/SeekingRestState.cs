@@ -1,11 +1,11 @@
-// Fichier : Assets/Scripts/Units/States/SeekingRestState.cs
 using UnityEngine;
 
 public class SeekingRestState : IUnitState
 {
+
+    // Try to find a house to rest in
     public void OnEnter(Unit unit)
     {
-        // 1. Tenter d'acquérir une place dans une Maison
         BuildingManager bm = GameObject.FindObjectOfType<BuildingManager>();
 
         if (bm != null && bm.TryAcquireRestSlot())
@@ -18,17 +18,11 @@ public class SeekingRestState : IUnitState
         }
         else
         {
-            // 2. Si aucune maison/place n'est disponible, l'unité erre
-            unit.StateMachine.ChangeState(new ErranceState());
+            unit.StateMachine.ChangeState(new WanderState());
         }
     }
 
-    public void OnExecute(Unit unit)
-    {
-    }
+    public void OnExecute(Unit unit) { }
 
-    public void OnExit(Unit unit)
-    {
-        // Transition immédiate
-    }
+    public void OnExit(Unit unit) {}
 }

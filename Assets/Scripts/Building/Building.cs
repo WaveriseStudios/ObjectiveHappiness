@@ -1,4 +1,3 @@
-// Fichier : Assets/Scripts/Buildings/Building.cs
 using UnityEngine;
 
 public class Building : MonoBehaviour
@@ -9,6 +8,9 @@ public class Building : MonoBehaviour
     [HideInInspector] public int currentRestOccupancy = 0;
 
 
+
+    // Functions to make the building available to only 
+    // {maxRestOccupancy} unit 
     public bool TryAcquireSlot()
     {
         if (currentRestOccupancy < maxRestOccupancy)
